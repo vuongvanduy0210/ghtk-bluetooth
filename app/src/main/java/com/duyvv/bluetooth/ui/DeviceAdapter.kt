@@ -1,11 +1,13 @@
+package com.duyvv.bluetooth.ui
+
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
-import com.duyvv.bluetooth.DeviceItem
 import com.duyvv.bluetooth.databinding.ItemDeviceBinding
 import com.duyvv.bluetooth.databinding.ItemHeaderBinding
+import com.duyvv.bluetooth.domain.DeviceItem
 
 class DeviceAdapter(
     private val deviceListener: DeviceListener
