@@ -1,13 +1,10 @@
 package com.duyvv.bluetooth.receiver
 
-import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import com.duyvv.bluetooth.data.toBluetoothDeviceDomain
-import com.duyvv.bluetooth.domain.BluetoothDeviceDomain
 
 class BluetoothConnectReceiver(
     private val onStateChanged: (isConnected: Boolean, BluetoothDevice) -> Unit
@@ -21,10 +18,11 @@ class BluetoothConnectReceiver(
         } else {
             intent?.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
         }
-        when(intent?.action) {
+        when (intent?.action) {
             BluetoothDevice.ACTION_ACL_CONNECTED -> {
                 onStateChanged(true, device ?: return)
             }
+
             BluetoothDevice.ACTION_ACL_DISCONNECTED -> {
                 onStateChanged(false, device ?: return)
             }
