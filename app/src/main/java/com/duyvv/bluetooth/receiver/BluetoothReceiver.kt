@@ -19,7 +19,7 @@ class BluetoothReceiver(
                 BluetoothAdapter.ACTION_STATE_CHANGED -> {
                     val state =
                         it.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR)
-                    handleBluetoothState(state)
+                    handleBluetoothState.invoke(state)
                 }
 
                 else -> {

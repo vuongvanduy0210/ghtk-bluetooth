@@ -5,8 +5,8 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
-    android:paddingHorizontal="10dp">
+    android:paddingHorizontal="10dp"
+    tools:context=".MainActivity">
 
     <Button
         android:id="@+id/btnControlBluetooth"
@@ -18,6 +18,16 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Connect" />
 
+    <Button
+        android:id="@+id/btnStartServer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnControlBluetooth"
+        android:text="Start server" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rcvDevice"
         android:layout_width="0dp"
@@ -26,6 +36,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnControlBluetooth" />
+        app:layout_constraintTop_toBottomOf="@+id/btnStartServer" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

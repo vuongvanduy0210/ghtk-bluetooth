@@ -24,8 +24,10 @@ import com.duyvv.bluetooth.domain.DeviceItem
 import com.duyvv.bluetooth.ui.BluetoothViewModel
 import com.duyvv.bluetooth.ui.DeviceAdapter
 import com.duyvv.bluetooth.ui.DeviceListener
+import com.duyvv.bluetooth.ui.ProgressDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -40,10 +42,12 @@ class MainActivity : AppCompatActivity() {
     private val isBluetoothEnabled: Boolean
         get() = bluetoothAdapter?.isEnabled == true
 
+    private val progressDialog by lazy { ProgressDialog(this) }
+
     private val deviceAdapter by lazy {
         DeviceAdapter(object : DeviceListener {
             override fun onClickDevice(device: DeviceItem.Device) {
-
+                viewModel.connectDevice(device.bluetoothDevice)
             }
         })
     }
@@ -94,8 +98,22 @@ class MainActivity : AppCompatActivity() {
         ) {
             deviceAdapter.setData(it)
         }
-        collectLifecycleFlow(viewModel.bluetoothState) {
+        collectLatestLifecycleFlow(viewModel.bluetoothState) {
             handleBluetoothState(it)
+        }
+        collectLifecycleFlow(viewModel.isConnected) {
+            toastLong("Your device is connected!")
+        }
+        collectLifecycleFlow(viewModel.isConnecting) {
+            if (it) {
+                if (progressDialog.isShowing) progressDialog.dismiss()
+                progressDialog.show()
+            } else {
+                progressDialog.dismiss()
+            }
+        }
+        collectLifecycleFlow(viewModel.error) { error ->
+            error?.let { toast(it) }
         }
     }
 
@@ -117,6 +135,10 @@ class MainActivity : AppCompatActivity() {
                 val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
                 activityResultLauncher.launch(enableBtIntent)
             }
+        }
+
+        binding.btnStartServer.setOnClickListener {
+            viewModel.waitForIncomingConnections()
         }
     }
 
@@ -184,10 +206,20 @@ class MainActivity : AppCompatActivity() {
     private fun toast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
+
+    private fun toastLong(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+    }
 }
 
 fun <T> ComponentActivity.collectLifecycleFlow(flow: Flow<T>, collect: suspend (T) -> Unit) {
     lifecycleScope.launch {
         flow.collect(collect)
+    }
+}
+
+fun <T> ComponentActivity.collectLatestLifecycleFlow(flow: Flow<T>, collect: suspend (T) -> Unit) {
+    lifecycleScope.launch {
+        flow.collectLatest(collect)
     }
 }
