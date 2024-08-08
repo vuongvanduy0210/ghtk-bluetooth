@@ -1,4 +1,4 @@
-package com.duyvv.bluetooth.ui
+package com.duyvv.bluetooth.ui.bluetooth
 
 import android.app.Dialog
 import android.content.Context

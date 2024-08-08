@@ -2,4 +2,6 @@
     <string name="app_name">Bluetooth</string>
     <string name="enable_bluetooth">Enable bluetooth</string>
     <string name="disable_bluetooth">Disable bluetooth</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

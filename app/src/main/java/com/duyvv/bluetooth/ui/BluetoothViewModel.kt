@@ -4,19 +4,20 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.duyvv.bluetooth.domain.BluetoothController
 import com.duyvv.bluetooth.domain.BluetoothDeviceDomain
+import com.duyvv.bluetooth.domain.BluetoothMessage
 import com.duyvv.bluetooth.domain.ConnectionResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -35,7 +36,10 @@ class BluetoothViewModel @Inject constructor(
     val isConnecting = _isConnecting.asStateFlow()
 
     private val _error = MutableSharedFlow<String?>()
-    val error: SharedFlow<String?> = _error.asSharedFlow()
+    val error = _error.asSharedFlow()
+
+    private val _messages = MutableStateFlow<List<BluetoothMessage>>(emptyList())
+    val messages = _messages.asStateFlow()
 
     private var deviceConnectionJob: Job? = null
 
@@ -61,6 +65,10 @@ class BluetoothViewModel @Inject constructor(
                     _isConnected.value = false
                     _isConnecting.value = false
                     _error.emit(result.message)
+                }
+
+                is ConnectionResult.TransferSucceeded -> {
+                    _messages.value += result.message
                 }
             }
         }
@@ -97,6 +105,15 @@ class BluetoothViewModel @Inject constructor(
         deviceConnectionJob = bluetoothController
             .connectToDevice(device)
             .listen()
+    }
+
+    fun sendMessage(message: String) {
+        viewModelScope.launch {
+            val bluetoothMessage = bluetoothController.sendMessage(message)
+            if (bluetoothMessage != null) {
+                _messages.value += bluetoothMessage
+            }
+        }
     }
 
     fun disconnectFromDevice() {
