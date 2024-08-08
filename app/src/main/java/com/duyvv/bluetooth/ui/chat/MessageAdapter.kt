@@ -79,6 +79,7 @@ class MessageAdapter : Adapter<MessageViewHolder<out ViewBinding>>() {
         MessageViewHolder<ItemReceivedMessageBinding>(binding) {
         override fun bind(item: Any) {
             binding.tvContent.text = (item as BluetoothMessage).message
+            binding.tvSenderName.text = "${item.senderName}:"
         }
     }
 }

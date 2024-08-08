@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/bluetoothFragment"
         android:name="com.duyvv.bluetooth.ui.bluetooth.BluetoothFragment"
-        android:label="BluetoothFragment" >
+        android:label="BluetoothFragment">
         <action
             android:id="@+id/action_bluetoothFragment_to_chatFragment"
             app:destination="@id/chatFragment"

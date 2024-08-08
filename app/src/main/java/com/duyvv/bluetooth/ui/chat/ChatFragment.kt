@@ -2,14 +2,13 @@ package com.duyvv.bluetooth.ui.chat
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.os.Message
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.duyvv.bluetooth.MainActivity
 import com.duyvv.bluetooth.R
 import com.duyvv.bluetooth.base.BaseFragment
 import com.duyvv.bluetooth.databinding.FragmentChatBinding
@@ -20,6 +19,10 @@ class ChatFragment : BaseFragment<FragmentChatBinding>() {
 
     private val messageAdapter: MessageAdapter by lazy {
         MessageAdapter()
+    }
+
+    private val activity: MainActivity by lazy {
+        requireActivity() as MainActivity
     }
 
     private lateinit var viewmodel: BluetoothViewModel
@@ -56,11 +59,18 @@ class ChatFragment : BaseFragment<FragmentChatBinding>() {
 
         binding.btnDisconnect.setOnClickListener {
             viewmodel.disconnectFromDevice()
-            findNavController().popBackStack()
+            activity.hideKeyboard()
+            val navController = Navigation.findNavController(
+                requireActivity(),
+                R.id.nav_host_fragment
+            )
+            activity.finish()
         }
 
         collectLifecycleFlow(viewmodel.messages) {
             messageAdapter.setMessages(it)
+            val lastPosition = if (it.size - 1 < 0) 0 else it.size - 1
+            binding.rcvMessage.smoothScrollToPosition(lastPosition)
         }
     }
 

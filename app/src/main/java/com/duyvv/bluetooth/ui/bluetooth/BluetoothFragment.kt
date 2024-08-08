@@ -15,7 +15,8 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity.RESULT_OK
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
+import androidx.navigation.NavOptions
+import androidx.navigation.Navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.duyvv.bluetooth.R
 import com.duyvv.bluetooth.base.BaseFragment
@@ -105,9 +106,8 @@ class BluetoothFragment : BaseFragment<FragmentBluetoothBinding>() {
         collectLifecycleFlow(viewModel.isConnected) {
             if (it) {
                 toastLong("Your device is connected!")
-                navigate(
-                    BluetoothFragmentDirections.actionBluetoothFragmentToChatFragment()
-                )
+
+                navigateToChatFragment()
             }
         }
         collectLifecycleFlow(viewModel.isConnecting) {
@@ -120,6 +120,22 @@ class BluetoothFragment : BaseFragment<FragmentBluetoothBinding>() {
         }
         collectLifecycleFlow(viewModel.error) { error ->
             error?.let { toast(it) }
+        }
+    }
+
+    private fun navigateToChatFragment() {
+        val navController = findNavController(
+            requireActivity(),
+            R.id.nav_host_fragment
+        )
+        if (navController.currentDestination?.id == R.id.bluetoothFragment) {
+            navController.navigate(
+                BluetoothFragmentDirections
+                    .actionBluetoothFragmentToChatFragment(),
+                NavOptions.Builder()
+                    .setPopUpTo(R.id.bluetoothFragment, true)
+                    .build()
+            )
         }
     }
 
